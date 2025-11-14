@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 export const Navbar = () => {
@@ -7,6 +8,27 @@ export const Navbar = () => {
   // TODO: Manejar errores apropiadamente
 
   const navigate = useNavigate();
+
+  const [userName, setUserName] = useState("");
+
+  const getUserProfile = async () => {
+    try {
+      const fetchProfile = await fetch("http://localhost:3000/api/profile", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      const data = await fetchProfile.json();
+
+      console.log(data);
+
+      const name = await data.user.name;
+
+      setUserName(name);
+    } catch (error) {
+      console.log("Error al obtener datos de usuario", error);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -31,7 +53,11 @@ export const Navbar = () => {
     }
   };
 
-  const userName = "Usuario"; // TODO: Reemplazar con el nombre real del usuario obtenido de /api/profile
+  useEffect(() => {
+    getUserProfile();
+  }, []);
+
+  // const userName = "Usuario"; // TODO: Reemplazar con el nombre real del usuario obtenido de /api/profile
 
   return (
     <nav className="bg-gray-900 text-white h-16 left-0 right-0 shadow-lg sticky top-0 z-50">
